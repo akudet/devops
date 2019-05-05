@@ -43,10 +43,9 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
   # config.vm.synced_folder ".", "/vagrant", disabled: true
-  config.vm.synced_folder ".", "/vagrant", disabled: true
-  
+  config.vm.synced_folder ".", "/vagrant"
+
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
@@ -71,26 +70,17 @@ Vagrant.configure("2") do |config|
   # SHELL
   config.vm.provision "file", source: "./config", destination: "$HOME/config"
   config.vm.provision "shell", path: "./config/init.sh"
-  
+
   config.vm.define "master" do |master|
-    master.vm.network "private_network", ip: "192.168.33.100", virtualbox__intnet: true
-	master.vm.network "private_network", ip: "192.168.12.100"
-	master.vm.synced_folder ".", "/vagrant"
-    
-	master.vm.provision "shell",
-	  inline: "echo hello from master"
+    master.vm.hostname = "master"
+    master.vm.network "private_network", ip: "192.168.121.100"
   end
-  
+
   (1..2).each do |i|
     config.vm.define "node-#{i}" do |node|
-	  node.vm.network "private_network", ip: "192.168.33.#{100 + i}", virtualbox__intnet: true
-	  node.vm.network "private_network", ip: "192.168.12.#{100 + i}"
-	  
-      node.vm.provision "shell",
-        inline: "echo hello from node #{i}"
+      node.vm.hostname = "node-#{i}"
+      node.vm.network "private_network", ip: "192.168.121.#{100 + i}"
     end
   end
-  
-  # sudo docker swarm join --token SWMTKN-1-3pzw89873acs0w0jt00h2swg36vfa8ufaof95aj0y4meiubwrj-boczy50my0qu6ky4piynz7ys6 192.168.2.87:2377
 
 end
