@@ -1,0 +1,78 @@
+pipeline {
+    agent none
+    stages {
+        stage("build") {
+            agent any
+            steps {
+                script {
+                    def projs = ["eureka-server", "eureka-client"]
+
+                }
+            }
+        }
+//        stage("docker") {
+//            agent any
+//            steps {
+//                dir('eureka-server') {
+//                    unstash 'docker-jar'
+//                    sh 'cd docker; docker build . -t harbor.dev.svc/test/eureka-server:${BUILD_NUMBER}'
+//                    sh 'docker login -u admin -pHarbor12345 harbor.dev.svc'
+//                    sh 'docker push harbor.dev.svc/test/eureka-server:${BUILD_NUMBER}'
+//                    sh 'docker image rm harbor.dev.svc/test/eureka-server:${BUILD_NUMBER}'
+//                }
+//            }
+//        }
+//        stage('build') {
+//            agent {
+//                docker {
+//                    image 'gradle:5.4.1-jdk8-alpine'
+//                    args '-v /home/vagrant/.gradle:/home/gradle/.gradle'
+//                }
+//            }
+//            when {
+//                changeset 'eureka-*/**'
+//                beforeAgent true
+//            }
+//            steps {
+//                dir('eureka-server') {
+//                    sh 'sh ../dists/jenkins/scripts/build.sh'
+//                    stash(name: 'gradle-jar', includes: 'build/libs/*.jar')
+//                    stash(name: 'docker-jar', includes: 'docker/app.jar')
+//                }
+//            }
+//        }
+//        stage("deploy-k8s") {
+//            agent any
+//            steps {
+//                sh "ssh vagrant@192.168.121.100 'kubectl set image deploy eureka-server eureka-server=harbor.dev.svc/test/eureka-server:${BUILD_NUMBER}'"
+//            }
+//        }
+        stage('deploy') {
+            agent {
+                docker {
+                    image 'instrumentisto/rsync-ssh'
+                    args '-v /home/vagrant:/root'
+                }
+            }
+            when {
+                branch 'master'
+                beforeAgent true
+            }
+            steps {
+                unstash 'mvn-jar'
+                unstash 'gradle-jar'
+                sh 'rsync -ru --progress -e "ssh -p 7023" zlh-security-common/target/*.jar root@47.111.175.69:/opt/tomcat/webapps/'
+                sh 'ssh -f root@47.111.175.69 -p 7023 "cd /opt/tomcat/webapps/;bash restart.sh;"'
+                sh 'rsync -ru --progress -e "ssh -p 7023" zlh-security-gateway/build/libs/*.jar root@47.111.175.69:/opt/tomcat/webapps/'
+            }
+        }
+    }
+
+    post {
+        always {
+            slackSend(
+                    message: "${env.STACK_PREFIX} production deploy: *${env.DEPLOY_VERSION}*. <${env.DEPLOY_URL}|Access service> - <${env.BUILD_URL}|Check build>"
+            )
+        }
+    }
+}
