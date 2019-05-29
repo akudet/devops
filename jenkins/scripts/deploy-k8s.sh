@@ -2,4 +2,5 @@
 
 source ./env
 
-ssh vagrant@192.168.121.100 "kubectl set image deploy $ROOT_PROJECT_NAME $PROJECT_NAME=$DOCKER_IMAGE"
+scp ./k8s-deploy.yaml vagrant@192.168.121.100:~
+ssh vagrant@192.168.121.100 "kubectl apply -f ~/k8s-deploy.yaml"

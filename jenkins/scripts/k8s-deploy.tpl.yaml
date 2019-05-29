@@ -1,0 +1,41 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: $PROJECT_NAME
+  namespace: $PROJECT_NAMESPACE
+spec:
+  selector:
+    app: $PROJECT_NAME
+    release: $PROJECT_RELEASE
+  ports:
+  - name: http
+    port: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $PROJECT_NAME
+  namespace: $PROJECT_NAMESPACE
+  labels:
+    app: $PROJECT_NAME
+    release: $PROJECT_RELEASE
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: $PROJECT_NAME
+      release: $PROJECT_RELEASE
+  template:
+    metadata:
+      labels:
+        app: $PROJECT_NAME
+        release: $PROJECT_RELEASE
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: http
+        image: $DOCKER_IMAGE
+        ports:
+        - containerPort: $SERVER_PORT
