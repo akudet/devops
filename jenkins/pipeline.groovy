@@ -3,9 +3,17 @@ def build(projs) {
         def proj = projs.get(i);
         stage("build-maven-${proj}") {
             dir(proj) {
-                withDockerContainer(image: 'gradle:5.4.1-jdk8', args: '-v /home/vagrant/.gradle:/home/gradle/.gradle -v /usr/bin/envsubst:/usr/bin/envsubst') {
-                    sh 'sh  $WORKSPACE/dists/jenkins/scripts/build-maven.sh'
-                    stash(name: 'docker-jar', includes: 'docker/*')
+                if (fileExists("build.gradle")) {
+                    withDockerContainer(image: 'gradle:5.4.1-jdk8', args: '-v gradle_cache:/home/gradle/.gradle -v /usr/bin/envsubst:/usr/bin/envsubst') {
+                        sh 'sh  $WORKSPACE/dists/jenkins/scripts/build-gradle.sh'
+                        stash(name: 'docker-jar', includes: 'docker/*')
+                    }
+                }
+                if (fileExists("pom.xml")) {
+                    withDockerContainer(image: 'maven:3-jdk-8', args: '-v maven_cache:/root/.m2 -v /usr/bin/envsubst:/usr/bin/envsubst') {
+                        sh 'sh  $WORKSPACE/dists/jenkins/scripts/build-maven.sh'
+                        stash(name: 'docker-jar', includes: 'docker/*')
+                    }
                 }
             }
         }
