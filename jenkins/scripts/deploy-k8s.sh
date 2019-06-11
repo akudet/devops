@@ -2,5 +2,5 @@
 
 source ./env
 
-scp ./k8s-deploy.yaml vagrant@192.168.121.100:~
-ssh vagrant@192.168.121.100 "kubectl apply -f ~/k8s-deploy.yaml"
+scp ./k8s-deploy.yaml $DEPLOY_SERVER:~
+ssh $DEPLOY_SERVER "kubectl apply -f ~/k8s-deploy.yaml"
