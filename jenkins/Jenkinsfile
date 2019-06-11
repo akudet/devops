@@ -68,11 +68,11 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            slackSend(
-                    message: "${env.STACK_PREFIX} production deploy: *${env.DEPLOY_VERSION}*. <${env.DEPLOY_URL}|Access service> - <${env.BUILD_URL}|Check build>"
-            )
-        }
-    }
+//    post {
+//        always {
+//            slackSend(
+//                    message: "${env.STACK_PREFIX} production deploy: *${env.DEPLOY_VERSION}*. <${env.DEPLOY_URL}|Access service> - <${env.BUILD_URL}|Check build>"
+//            )
+//        }
+//    }
 }
