@@ -2,6 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+type: Deployment
+
 replicaCount: 1
 
 image:
@@ -32,6 +34,12 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
+
+persistence:
+  enabled: false
+  storageClass: ""
+  accessMode: ReadWriteMany
+  size: 8Gi
 
 resources: {}
 

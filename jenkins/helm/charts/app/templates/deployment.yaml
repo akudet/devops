@@ -48,6 +48,14 @@ spec:
             {{- end }}
               port: {{ .Values.service.probe.port }}
         {{- end }}
+          volumeMounts:
+          {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: {{ .Values.persistence.path }}
+          {{- end }}
+          {{- if .Values.persistence.extraVolumes }}
+            {{- toYaml .Values.persistence.extraVolumeMounts | nindent 12 }}
+          {{- end }}
           resources:
               {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
@@ -62,3 +70,12 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      volumes:
+      - name: data
+      {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}
+      {{- end -}}
+      {{- if .Values.persistence.extraVolumes }}
+      {{- toYaml .Values.persistence.extraVolumes | nindent 6 }}
+      {{- end }}

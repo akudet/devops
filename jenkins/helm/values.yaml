@@ -16,33 +16,33 @@ app:
     - host: ""
       paths:
       - /app/v1
+
     #    tls:
     #    - secretName: chart-example-tls
     #      hosts:
     #      - chart-example.local
 
   persistence:
-    enabled: false
-    size: 40Gi
+    enabled: true
+    size: 16Gi
+    path: /app/data
 
+    extraVolumes:
+    - name: extras
+      emptyDir: {}
 
+    extraVolumeMounts:
+    - name: extras
+      mountPath: /app/extras
+      readOnly: true
 
-  extraVolumes: |
-    # - name: extras
-    #   emptyDir: {}
-
-  extraVolumeMounts: |
-    # - name: extras
-    #   mountPath: /usr/share/extras
-    #   readOnly: true
-
-  resources:
-    limits:
-      cpu: 100m
-      memory: 128Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
+#  resources:
+#    limits:
+#      cpu: 100m
+#      memory: 128Mi
+#    requests:
+#      cpu: 100m
+#      memory: 128Mi
 
 
 

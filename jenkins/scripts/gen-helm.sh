@@ -2,7 +2,7 @@
 
 source ../env
 
-cp -rn $WORKSPACE/jenkins/helm/* ./
+cp -rn $WORKSPACE/dists/jenkins/helm/* ./
 
 envsubst < Chart.yaml > Chart.yaml.tmp
 mv -f Chart.yaml.tmp Chart.yaml
