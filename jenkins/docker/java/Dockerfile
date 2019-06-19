@@ -7,6 +7,4 @@ WORKDIR /app
 
 COPY $PROJECT_JAR .
 
-EXPOSE 8080
-
 ENTRYPOINT ["java", "-Dspring.profiles.active=docker", "-jar","$PROJECT_JAR"]

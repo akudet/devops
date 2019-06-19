@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-source ../env
+mkdir helm
+cd helm
 
 cp -rn $WORKSPACE/dists/jenkins/helm/* ./
 
