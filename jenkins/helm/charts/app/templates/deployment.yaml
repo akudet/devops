@@ -32,17 +32,18 @@ spec:
         {{- end }}
         {{- if .Values.service.probe.enabled }}
           livenessProbe:
-            {{- if eq .Values.service.probe.port "http" }}
-            httpGet:
-              path: /
-            {{- else }}
+            initialDelaySeconds: 5
+            periodSeconds: 30
+            failureThreshold: 6
             tcpSocket:
-            {{- end }}
               port: {{ .Values.service.probe.port }}
           readinessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            failureThreshold: 6
             {{- if eq .Values.service.probe.port "http" }}
             httpGet:
-              path: /
+              path: /healthz
             {{- else }}
             tcpSocket:
             {{- end }}
