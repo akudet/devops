@@ -1,41 +1,41 @@
-app:
-  replicaCount: 3
-
-  service:
-    type: ClusterIP
-    ports:
-    - name: http
-      port: 80
-    probe:
-      enabled: true
-      port: http
-
-  ingress:
-    enabled: true
-    hosts:
-    - host: ""
-      paths:
-      - /app/v1
-
-    #    tls:
-    #    - secretName: chart-example-tls
-    #      hosts:
-    #      - chart-example.local
-
-  persistence:
-    enabled: true
-    size: 16Gi
-    path: /app/data
-
-    extraVolumes:
-    - name: extras
-      emptyDir: {}
-
-    extraVolumeMounts:
-    - name: extras
-      mountPath: /app/extras
-      readOnly: true
-
+#app:
+#  replicaCount: 3
+#
+#  service:
+#    type: ClusterIP
+#    ports:
+#    - name: http
+#      port: 80
+#    probe:
+#      enabled: true
+#      port: http
+#
+#  ingress:
+#    enabled: true
+#    hosts:
+#    - host: ""
+#      paths:
+#      - /app/v1
+#
+#    tls:
+#    - secretName: chart-example-tls
+#      hosts:
+#      - chart-example.local
+#
+#  persistence:
+#    enabled: false
+#    size: 16Gi
+#    path: /app/data
+#
+#    extraVolumes:
+#    - name: extras
+#      emptyDir: {}
+#
+#    extraVolumeMounts:
+#    - name: extras
+#      mountPath: /app/extras
+#      readOnly: true
+#
 #  resources:
 #    limits:
 #      cpu: 100m
@@ -43,7 +43,3 @@ app:
 #    requests:
 #      cpu: 100m
 #      memory: 128Mi
-
-
-
-
