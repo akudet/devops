@@ -35,20 +35,27 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 30
             failureThreshold: 6
+            {{- if eq .Values.service.probe.port "http" }}
+            httpGet:
+              path: /health/live
+              port: {{ .Values.service.probe.port }}
+            {{- else }}
             tcpSocket:
               port: {{ .Values.service.probe.port }}
+            {{- end }}
           readinessProbe:
             initialDelaySeconds: 30
             periodSeconds: 30
             failureThreshold: 6
             {{- if eq .Values.service.probe.port "http" }}
             httpGet:
-              path: /healthz
+              path: /health/ready
+              port: {{ .Values.service.probe.port }}
             {{- else }}
             tcpSocket:
-            {{- end }}
               port: {{ .Values.service.probe.port }}
-        {{- end }}
+            {{- end }}
+          {{- end }}
           volumeMounts:
           {{- if .Values.persistence.enabled }}
             - name: data
