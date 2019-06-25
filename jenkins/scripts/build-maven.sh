@@ -34,7 +34,5 @@ mkdir docker
 cp "target/$PROJECT_JAR" docker/
 envsubst < $WORKSPACE/dists/jenkins/docker/java/Dockerfile > docker/Dockerfile
 
-sh $WORKSPACE/dists/jenkins/scripts/gen-helm.sh
-
 cat env
 

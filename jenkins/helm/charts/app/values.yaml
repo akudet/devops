@@ -1,6 +1,11 @@
 # Default values for app.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+deployEnv: $DEPLOY_ENV
+
+env:
+- name: SPRING_PROFILES_ACTIVE
+  value: $DEPLOY_ENV
 
 type: Deployment
 
@@ -28,7 +33,7 @@ ingress:
   enabled: true
   hosts:
   - host: ""
-    paths: [/$PROJECT_NAME/v$PROJECT_MAJOR_VERSION]
+    paths: [/api/$PROJECT_NAME/v$PROJECT_MAJOR_VERSION]
 
   tls: []
   #  - secretName: chart-example-tls

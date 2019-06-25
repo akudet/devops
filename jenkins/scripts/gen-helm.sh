@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-mkdir helm
-cd helm
-
 cp -rn $WORKSPACE/dists/jenkins/helm/* ./
 
 envsubst < Chart.yaml > Chart.yaml.tmp

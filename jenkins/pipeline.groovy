@@ -1,7 +1,26 @@
+/*
+ * Check a folder if changed in the latest commit.
+ * Returns true if changed, or false if no changes.
+ */
+
+boolean isChanged(path) {
+    try {
+        // git diff will return 1 for changes (failure) which is caught in catch, or
+        // 0 meaning no changes
+        sh "git diff --quiet --exit-code HEAD~1..HEAD ${path}"
+        return false
+    } catch (ignored) {
+        return true
+    }
+}
+
 def build(projs) {
-    def envs = ["prod"]
+    def envs = ["dev", "prod", "prod2", "test"]
     for (int i = 0; i < projs.size(); i++) {
         def proj = projs.get(i)
+        if (!isChanged(proj)) {
+            continue
+        }
         dir(proj) {
             stage("build-docker-${proj}") {
                 if (fileExists("build.gradle")) {
@@ -24,12 +43,18 @@ def build(projs) {
                 }
             }
 
-            for (int j = 0; j < projs.size(); j++) {
+            for (int j = 0; j < envs.size(); j++) {
                 def deployEnv = envs.get(j)
+                if (deployEnv.startsWith("prod")) {
+                    if (env.BRANCE_NAME != "master") {
+                        continue
+                    }
+                }
                 stage("deploy-helm-${proj}-${deployEnv}") {
                     env.DEPLOY_SERVER = "kubernetes-admin@kubernetes"
                     env.DEPLOY_ENV = "${deployEnv}"
                     dir("helm") {
+                        sh '$WORKSPACE/dists/jenkins/scripts/gen-helm.sh'
                         sh '$WORKSPACE/dists/jenkins/scripts/deploy-helm.sh'
                     }
                 }
