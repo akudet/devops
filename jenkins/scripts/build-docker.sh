@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-source ../env
-
 cat Dockerfile
 
 docker login $DOCKER_SERVER

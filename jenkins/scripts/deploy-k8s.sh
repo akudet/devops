@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-source ../env
+source $DO_WORKSPACE/env
 
 kubectl apply -f .

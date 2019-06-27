@@ -11,10 +11,8 @@ type: Deployment
 
 replicaCount: 1
 
-image:
-  repository: $DOCKER_SERVER/$ROOT_PROJECT_NAME/$PROJECT_NAME
-  tag: $PROJECT_VERSION-$BUILD_NUMBER
-  pullPolicy: IfNotPresent
+image: $DOCKER_IMAGE
+imagePullPolicy: IfNotPresent
 
 imagePullSecrets: [name: "regcred"]
 nameOverride: ""

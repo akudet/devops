@@ -7,6 +7,6 @@ ENV SPRING_PROFILES_ACTIVE docker
 
 WORKDIR /app
 
-COPY $PROJECT_JAR .
+COPY app/* ./
 
-ENTRYPOINT ["java", "-jar","$PROJECT_JAR"]
+ENTRYPOINT ["java", "-jar","app.jar"]

@@ -21,18 +21,13 @@ export PROJECT_VERSION=$(mvn -q \
     --non-recursive \
     exec:exec)
 export PROJECT_MAJOR_VERSION=$(echo $PROJECT_VERSION | awk '{split($0,v,"."); print v[1]}')
-export PROJECT_JAR="$PROJECT_NAME-$PROJECT_VERSION.jar"
 export DOCKER_IMAGE=$DOCKER_SERVER/$ROOT_PROJECT_NAME/$PROJECT_NAME:$PROJECT_VERSION-$BUILD_NUMBER
-export APP_NAME=$PROJECT_NAME-v$PROJECT_MAJOR_VERSION
 
-envsubst < $WORKSPACE/dists/jenkins/scripts/env > env
+envsubst < $DO_WORKSPACE/jenkins/scripts/env > $DO_WORKSPACE/env
+cat $DO_WORKSPACE/env
 
 mvn package  -Dmaven.test.skip=true
-#mvn deploy  -Dmaven.test.skip=true
 
-mkdir docker
-cp "target/$PROJECT_JAR" docker/
-envsubst < $WORKSPACE/dists/jenkins/docker/java/Dockerfile > docker/Dockerfile
-
-cat env
-
+mkdir -p docker/app
+cp build/libs/$PROJECT_NAME-$PROJECT_VERSION.jar docker/app/app.jar
+envsubst < $DO_WORKSPACE/jenkins/docker/java/Dockerfile > docker/Dockerfile
