@@ -15,7 +15,12 @@ boolean isChanged(path) {
 }
 
 def build(projs) {
-    env.DO_WORKSPACE = "${env.WORKSPACE}/dists"
+    env.DEVOPS_WORKSPACE = "${env.WORKSPACE}/dists"
+
+    env.DOCKER_SERVER = "192.168.121.100:30003"
+    env.DOCKER_USERNAME = "admin"
+    env.DOCKER_PASSWORD = "Harbor12345"
+
 
     def envs = ["test"]
     for (int i = 0; i < projs.size(); i++) {
@@ -34,7 +39,7 @@ def build(projs) {
             }
             env.DEPLOY_SERVER = "kubernetes-admin@kubernetes"
             env.DEPLOY_ENV = "${deployEnv}"
-            ddemoir(proj) {
+            dir(proj) {
                 stage("build-docker-${proj}") {
                     if (!buildOnce) {
                         if (fileExists("build.gradle")) {
@@ -56,7 +61,6 @@ def build(projs) {
                             }
                         }
 
-                        env.DOCKER_SERVER = "${env.DOCKER_SERVER}"
                         env.DOCKER_IMAGE = sh(script: 'source $DEVOPS_WORKSPACE/env; echo $DOCKER_IMAGE', returnStdout: true)
                         dir("docker") {
                             sh 'cat Dockerfile'
