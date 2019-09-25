@@ -1,0 +1,5 @@
+export ROOT_PROJECT_NAME=zlh-iot-common-security
+export PROJECT_NAME=smxy-push-service
+export PROJECT_VERSION=1.3.1
+export PROJECT_MAJOR_VERSION=1
+export DOCKER_IMAGE=192.168.121.101:30003/zlh-iot-common-security/smxy-push-service:1.3.1-3

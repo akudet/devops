@@ -1,0 +1,82 @@
+app:
+  spring:
+    profiles:
+      # 使用的配置文件， 使用application-test.properties或application-test.yaml
+      active: test
+
+  # 实例副本数，以后可能改成自动扩展
+  replicaCount: 3
+
+  # 服务相关配置
+  service:
+    # ClusterIP, 或者 NodePort
+    type: ClusterIP
+    # 服务端口号
+    ports:
+    - name: http
+      # 内网端口
+      port: 80
+      # 外网端口（不建议使用），对应http应用配置网关
+      nodePort: 32080
+    - name: tcp
+      port: 8754
+      nodePort: 32088
+    # 服务探针，用于检测服务示范正常运行
+    probe:
+      enabled: true
+      # 探针检测端口名称
+      port: http
+
+  # 网关配置
+  # 对应http服务，外网通过网关访问集群内服务
+  ingress:
+    # 是否开启网关
+    enabled: true
+    hosts:
+    # 域名
+    - host: "app.gpsiov.com"
+      # 该域名下路径
+      paths:
+      - /security/app
+      - /security/app/v1
+    - host: "app.lenlian.com"
+      paths:
+      - /security/app
+      - /security/app/v3
+
+    # 若要使用https，只需在网关配置证书
+    tls:
+    # 证书secret名称，由集群管理员配置，或者单独配置一个git项目，通过ci cd自动更新到集群
+    - secretName: "app-gpsiov-com-cert"
+      # 使用该证书的域名
+      hosts:
+      - app.gpsiov.com
+
+  # 持久化存储配置
+  persistence:
+    # 是否开启存储
+    enabled: false
+    # 存储大小
+    size: 16Gi
+    # z存储挂载路径
+    path: /app/data
+
+    # 其它自定义卷
+    extraVolumes:
+    - name: extras
+      emptyDir: {}
+
+    # 其它自定义卷挂载路径
+    extraVolumeMounts:
+    - name: extras
+      mountPath: /app/extras
+      readOnly: true
+
+  # 应用资源限制
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
