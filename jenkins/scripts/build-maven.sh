@@ -23,11 +23,11 @@ export PROJECT_VERSION=$(mvn -q \
 export PROJECT_MAJOR_VERSION=$(echo $PROJECT_VERSION | awk '{split($0,v,"."); print v[1]}')
 export DOCKER_IMAGE=$DOCKER_SERVER/$ROOT_PROJECT_NAME/$PROJECT_NAME:$PROJECT_VERSION-$BUILD_NUMBER
 
-envsubst < $DO_WORKSPACE/jenkins/scripts/env > $DO_WORKSPACE/env
-cat $DO_WORKSPACE/env
+envsubst < $DEVOPS_WORKSPACE/jenkins/scripts/env > $DEVOPS_WORKSPACE/env
+cat $DEVOPS_WORKSPACE/env
 
 mvn package  -Dmaven.test.skip=true
 
 mkdir -p docker/app
 cp build/libs/$PROJECT_NAME-$PROJECT_VERSION.jar docker/app/app.jar
-envsubst < $DO_WORKSPACE/jenkins/docker/java/Dockerfile > docker/Dockerfile
+envsubst < $DEVOPS_WORKSPACE/jenkins/docker/java/Dockerfile > docker/Dockerfile

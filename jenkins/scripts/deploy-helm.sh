@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-source $DO_WORKSPACE/env
+cd helm
+
+source $DEVOPS_WORKSPACE/env
 
 export DEPLOY_NAME=${DEPLOY_ENV}-${PROJECT_NAME}-v$PROJECT_MAJOR_VERSION
 export DEPLOY_TIMEOUT=360

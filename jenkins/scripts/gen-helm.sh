@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-source $DO_WORKSPACE/env
+mkdir helm
+cd helm
 
-cp -rn $DO_WORKSPACE/jenkins/helm/* ./
+source $DEVOPS_WORKSPACE/env
+
+cp -rn $DEVOPS_WORKSPACE/jenkins/helm/* ./
 
 envsubst < Chart.yaml > Chart.yaml.tmp
 mv -f Chart.yaml.tmp Chart.yaml

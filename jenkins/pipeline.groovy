@@ -34,30 +34,30 @@ def build(projs) {
             }
             env.DEPLOY_SERVER = "kubernetes-admin@kubernetes"
             env.DEPLOY_ENV = "${deployEnv}"
-            dir(proj) {
+            ddemoir(proj) {
                 stage("build-docker-${proj}") {
                     if (!buildOnce) {
                         if (fileExists("build.gradle")) {
                             buildOnce = true
                             withDockerContainer(image: 'gradle:5.4.1-jdk8', args: '-v gradle_cache:/home/gradle/.gradle -v /usr/bin/envsubst:/usr/bin/envsubst') {
-                                sh '$DO_WORKSPACE/jenkins/scripts/build-gradle.sh'
+                                sh '$DEVOPS_WORKSPACE/jenkins/scripts/build-gradle.sh'
                             }
                         }
                         if (fileExists("pom.xml")) {
                             buildOnce = true
                             withDockerContainer(image: 'maven:3-jdk-8', args: '-v maven_cache:/root/.m2 -v /usr/bin/envsubst:/usr/bin/envsubst') {
-                                sh '$DO_WORKSPACE/jenkins/scripts/build-maven.sh'
+                                sh '$DEVOPS_WORKSPACE/jenkins/scripts/build-maven.sh'
                             }
                         }
                         if (fileExists("package.json")) {
                             buildOnce = false
                             withDockerContainer(image: 'node:lts', args: '-v /usr/bin/envsubst:/usr/bin/envsubst') {
-                                sh '$DO_WORKSPACE/jenkins/scripts/build-npm.sh'
+                                sh '$DEVOPS_WORKSPACE/jenkins/scripts/build-npm.sh'
                             }
                         }
 
                         env.DOCKER_SERVER = "${env.DOCKER_SERVER}"
-                        env.DOCKER_IMAGE = sh(script: 'source $DO_WORKSPACE/env; echo $DOCKER_IMAGE', returnStdout: true)
+                        env.DOCKER_IMAGE = sh(script: 'source $DEVOPS_WORKSPACE/env; echo $DOCKER_IMAGE', returnStdout: true)
                         dir("docker") {
                             sh 'cat Dockerfile'
                             sh 'docker login $DOCKER_SERVER'
@@ -70,8 +70,8 @@ def build(projs) {
 
                 stage("deploy-helm-${proj}-${deployEnv}") {
                     dir("helm") {
-                        sh '$DO_WORKSPACE/jenkins/scripts/gen-helm.sh'
-                        sh '$DO_WORKSPACE/jenkins/scripts/deploy-helm.sh'
+                        sh '$DEVOPS_WORKSPACE/jenkins/scripts/gen-helm.sh'
+                        sh '$DEVOPS_WORKSPACE/jenkins/scripts/deploy-helm.sh'
                     }
                 }
             }
