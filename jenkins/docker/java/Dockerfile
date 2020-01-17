@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8-jre-alpine
 
 LABEL app="$PROJECT_NAME"
 LABEL version="$PROJECT_VERSION"
@@ -9,4 +9,4 @@ WORKDIR /app
 
 COPY app/* ./
 
-ENTRYPOINT ["java", "-jar","app.jar"]
+ENTRYPOINT ["./docker-entrypoint.sh"]

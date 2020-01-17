@@ -13,5 +13,7 @@ cat $DEVOPS_WORKSPACE/env
 gradle build
 
 mkdir -p docker/app
+
+cp -r $DEVOPS_WORKSPACE/jenkins/docker/java/* docker/
 cp build/libs/$PROJECT_NAME-$PROJECT_VERSION.jar docker/app/app.jar
 envsubst < $DEVOPS_WORKSPACE/jenkins/docker/java/Dockerfile > docker/Dockerfile

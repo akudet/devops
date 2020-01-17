@@ -29,5 +29,6 @@ cat $DEVOPS_WORKSPACE/env
 mvn package  -Dmaven.test.skip=true
 
 mkdir -p docker/app
+cp -r $DEVOPS_WORKSPACE/jenkins/docker/java/* docker/
 cp build/libs/$PROJECT_NAME-$PROJECT_VERSION.jar docker/app/app.jar
 envsubst < $DEVOPS_WORKSPACE/jenkins/docker/java/Dockerfile > docker/Dockerfile

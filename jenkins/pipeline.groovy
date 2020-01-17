@@ -17,17 +17,22 @@ boolean isChanged(path) {
 def build(projs) {
     env.DEVOPS_WORKSPACE = "${env.WORKSPACE}/dists"
 
+    env.DATE_TAG = new Date().format("yyyy-MM-dd")
+
     env.DOCKER_SERVER = "192.168.121.100:30003"
     env.DOCKER_USERNAME = "admin"
     env.DOCKER_PASSWORD = "Harbor12345"
 
+    env.DOCKER_SERVER = "183.230.179.131:8082"
+    env.DOCKER_USERNAME = "vita-nx-mvn-public"
+    env.DOCKER_PASSWORD = "vita0109"
 
     def envs = ["test"]
     for (int i = 0; i < projs.size(); i++) {
         def proj = projs.get(i)
-        if (!isChanged(proj)) {
-            continue
-        }
+//        if (!isChanged(proj)) {
+//            continue
+//        }
         // only build once for every environment
         boolean buildOnce = false
         for (int j = 0; j < envs.size(); j++) {
@@ -72,12 +77,18 @@ def build(projs) {
                     }
                 }
 
-                stage("deploy-helm-${proj}-${deployEnv}") {
+                stage("deploy-docker-native-${proj}-${deployEnv}") {
                     dir("helm") {
-                        sh '$DEVOPS_WORKSPACE/jenkins/scripts/gen-helm.sh'
-                        sh '$DEVOPS_WORKSPACE/jenkins/scripts/deploy-helm.sh'
+                        sh '$DEVOPS_WORKSPACE/jenkins/scripts/deploy-docker-native.sh'
                     }
                 }
+
+//                stage("deploy-helm-${proj}-${deployEnv}") {
+//                    dir("helm") {
+//                        sh '$DEVOPS_WORKSPACE/jenkins/scripts/gen-helm.sh'
+//                        sh '$DEVOPS_WORKSPACE/jenkins/scripts/deploy-helm.sh'
+//                    }
+//                }
             }
         }
     }
