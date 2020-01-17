@@ -71,9 +71,7 @@ def build(projs) {
                 }
 
                 stage("deploy-docker-native-${proj}-${deployEnv}") {
-                    dir("helm") {
-                        sh '$DEVOPS_WORKSPACE/jenkins/scripts/deploy-docker-native.sh'
-                    }
+                    sh '$DEVOPS_WORKSPACE/jenkins/scripts/deploy-docker-native.sh'
                 }
 
 //                stage("deploy-helm-${proj}-${deployEnv}") {
