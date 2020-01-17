@@ -19,14 +19,6 @@ def build(projs) {
 
     env.DATE_TAG = new Date().format("yyyy-MM-dd")
 
-    env.DOCKER_SERVER = "192.168.121.100:30003"
-    env.DOCKER_USERNAME = "admin"
-    env.DOCKER_PASSWORD = "Harbor12345"
-
-    env.DOCKER_SERVER = "183.230.179.131:8082"
-    env.DOCKER_USERNAME = "vita-nx-mvn-public"
-    env.DOCKER_PASSWORD = "vita0109"
-
     def envs = ["test"]
     for (int i = 0; i < projs.size(); i++) {
         def proj = projs.get(i)
@@ -42,8 +34,9 @@ def build(projs) {
                     continue
                 }
             }
-            env.DEPLOY_SERVER = "kubernetes-admin@kubernetes"
             env.DEPLOY_ENV = "${deployEnv}"
+            load "${env.DEVOPS_WORKSPACE}/jenkins/config/env.${env.DEPLOY_ENV}.groovy"
+
             dir(proj) {
                 stage("build-docker-${proj}") {
                     if (!buildOnce) {
