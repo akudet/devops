@@ -22,9 +22,9 @@ def build(projs) {
     def envs = ["test"]
     for (int i = 0; i < projs.size(); i++) {
         def proj = projs.get(i)
-//        if (!isChanged(proj)) {
-//            continue
-//        }
+        if (!isChanged(proj)) {
+            continue
+        }
         // only build once for every environment
         boolean buildOnce = false
         for (int j = 0; j < envs.size(); j++) {
@@ -70,16 +70,22 @@ def build(projs) {
                     }
                 }
 
-                stage("deploy-docker-native-${proj}-${deployEnv}") {
-                    sh '$DEVOPS_WORKSPACE/jenkins/scripts/deploy-docker-native.sh'
+                switch (env.DEPLOY_MODE) {
+                    case "docker-native":
+                        stage("deploy-docker-native-${proj}-${deployEnv}") {
+                            sh '$DEVOPS_WORKSPACE/jenkins/scripts/deploy-docker-native.sh'
+                        }
+                        break;
+                    case "helm":
+                        stage("deploy-helm-${proj}-${deployEnv}") {
+                            dir("helm") {
+                                sh '$DEVOPS_WORKSPACE/jenkins/scripts/gen-helm.sh'
+                                sh '$DEVOPS_WORKSPACE/jenkins/scripts/deploy-helm.sh'
+                            }
+                        }
+                        break;
                 }
 
-//                stage("deploy-helm-${proj}-${deployEnv}") {
-//                    dir("helm") {
-//                        sh '$DEVOPS_WORKSPACE/jenkins/scripts/gen-helm.sh'
-//                        sh '$DEVOPS_WORKSPACE/jenkins/scripts/deploy-helm.sh'
-//                    }
-//                }
             }
         }
     }
