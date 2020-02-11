@@ -1,6 +1,7 @@
 /*
  * Check a folder if changed in the latest commit.
  * Returns true if changed, or false if no changes.
+ * @version 1.0.0
  */
 
 boolean isChanged(path) {
