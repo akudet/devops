@@ -14,15 +14,12 @@ boolean isChanged(path) {
     }
 }
 
-def build(projs) {
+def build(projs, group = "emernet.cn") {
     env.DEVOPS_WORKSPACE = "${env.WORKSPACE}/dists"
 
-    env.DOCKER_SERVER = "192.168.121.100:30003"
-    env.DOCKER_USERNAME = "admin"
-    env.DOCKER_PASSWORD = "Harbor12345"
+    env.DATE_TAG = new Date().format("yyyy-MM-dd")
 
-
-    def envs = ["test"]
+    def envs = ["test", "prod"]
     for (int i = 0; i < projs.size(); i++) {
         def proj = projs.get(i)
         if (!isChanged(proj)) {
@@ -33,12 +30,13 @@ def build(projs) {
         for (int j = 0; j < envs.size(); j++) {
             def deployEnv = envs.get(j)
             if (deployEnv.startsWith("prod")) {
-                if (env.BRANCE_NAME != "master") {
+                if (env.BRANCH_NAME.toString() != "master") {
                     continue
                 }
             }
-            env.DEPLOY_SERVER = "kubernetes-admin@kubernetes"
             env.DEPLOY_ENV = "${deployEnv}"
+            load "${env.DEVOPS_WORKSPACE}/jenkins/config/${group}/env.${env.DEPLOY_ENV}.groovy"
+
             dir(proj) {
                 stage("build-docker-${proj}") {
                     if (!buildOnce) {
@@ -63,21 +61,27 @@ def build(projs) {
 
                         env.DOCKER_IMAGE = sh(script: 'source $DEVOPS_WORKSPACE/env; echo $DOCKER_IMAGE', returnStdout: true)
                         dir("docker") {
-                            sh 'cat Dockerfile'
-                            sh 'docker login $DOCKER_SERVER'
-                            sh 'docker build -t $DOCKER_IMAGE .'
-                            sh 'docker push $DOCKER_IMAGE'
-                            sh 'docker image rm $DOCKER_IMAGE'
+                            sh '$DEVOPS_WORKSPACE/jenkins/scripts/build-docker.sh'
                         }
                     }
                 }
 
-                stage("deploy-helm-${proj}-${deployEnv}") {
-                    dir("helm") {
-                        sh '$DEVOPS_WORKSPACE/jenkins/scripts/gen-helm.sh'
-                        sh '$DEVOPS_WORKSPACE/jenkins/scripts/deploy-helm.sh'
-                    }
+                switch (env.DEPLOY_MODE) {
+                    case "docker-native":
+                        stage("deploy-docker-native-${proj}-${deployEnv}") {
+                            sh '$DEVOPS_WORKSPACE/jenkins/scripts/deploy-docker-native.sh'
+                        }
+                        break;
+                    case "helm":
+                        stage("deploy-helm-${proj}-${deployEnv}") {
+                            dir("helm") {
+                                sh '$DEVOPS_WORKSPACE/jenkins/scripts/gen-helm.sh'
+                                sh '$DEVOPS_WORKSPACE/jenkins/scripts/deploy-helm.sh'
+                            }
+                        }
+                        break;
                 }
+
             }
         }
     }
