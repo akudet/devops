@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
+set -e
+
 source $DEVOPS_WORKSPACE/env
 
+## load user defined env variables
 if [ -f "jenkins/env" ]; then
   . jenkins/env
 fi

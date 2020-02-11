@@ -7,5 +7,4 @@ env.DOCKER_PASSWORD = "vita0109"
 
 env.GATEWAY_URL = "http://192.168.1.5"
 
-
 env.DEPLOY_MODE = "docker-native"
