@@ -15,7 +15,7 @@ boolean isChanged(path) {
     }
 }
 
-def build(projs, envs = ["test"], group = "emernet.cn") {
+def build(projs, envs = ["test"], group = "default") {
     env.DEVOPS_WORKSPACE = "${env.WORKSPACE}/dists"
 
     env.DATE_TAG = new Date().format("yyyy-MM-dd")

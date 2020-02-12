@@ -20,7 +20,7 @@ DOCKER_RUN="docker run --name $DEPLOY_NAME -d --restart=always $DOCKER_OPTIONS -
 echo $DOCKER_RUN
 
 ssh -p $SSH_PORT $SSH_SERVER "docker login $DOCKER_SERVER"
-ssh -p $SSH_PORT $SSH_SERVER "docker rm -f $DEPLOY_NAME"
+ssh -p $SSH_PORT $SSH_SERVER "docker rm -f $DEPLOY_NAME" || true
 ssh -p $SSH_PORT $SSH_SERVER "$DOCKER_RUN"
 ssh -p $SSH_PORT $SSH_SERVER "docker image prune -f -a --filter=label=app=$PROJECT_NAME"
 

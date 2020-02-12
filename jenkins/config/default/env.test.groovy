@@ -1,0 +1,8 @@
+env.SSH_SERVER = "192.168.121.101"
+env.SSH_PORT = "22"
+
+env.DOCKER_SERVER = "192.168.121.100"
+env.DOCKER_USERNAME = "harbor"
+env.DOCKER_PASSWORD = "Harbor123"
+
+env.DEPLOY_MODE = "helm"
