@@ -15,12 +15,11 @@ boolean isChanged(path) {
     }
 }
 
-def build(projs, group = "emernet.cn") {
+def build(projs, envs = ["test"], group = "emernet.cn") {
     env.DEVOPS_WORKSPACE = "${env.WORKSPACE}/dists"
 
     env.DATE_TAG = new Date().format("yyyy-MM-dd")
 
-    def envs = ["test", "prod"]
     for (int i = 0; i < projs.size(); i++) {
         def proj = projs.get(i)
         if (!isChanged(proj)) {
@@ -30,7 +29,8 @@ def build(projs, group = "emernet.cn") {
         boolean buildOnce = false
         for (int j = 0; j < envs.size(); j++) {
             def deployEnv = envs.get(j)
-            if (deployEnv.startsWith("prod")) {
+            // only deploy to non test env for master branch
+            if (deployEnv.toString() != "test") {
                 if (env.BRANCH_NAME.toString() != "master") {
                     continue
                 }
